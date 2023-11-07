@@ -1,47 +1,4 @@
-ola mundo
-percebs
-teste
-mais um teste teste122
-teste 20/08
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/servico")
-public class ServicoController {
-
-    @Autowired
-    private ServicoService servicoService;
-
-    @PostMapping
-    public Servico criarServico(@RequestBody Servico servico) {
-        return servicoService.criarServico(servico);
-    }
-
-    @PutMapping("/{id}")
-    public Servico atualizarServico(@PathVariable Long id, @RequestBody Servico servico) {
-        return servicoService.atualizarServico(id, servico);
-    }
-
-    @GetMapping
-    public List<Servico> listarServicos() {
-        return servicoService.listarServicos();
-    }
-
-    @GetMapping("/{id}")
-    public Servico recuperarServicoPorId(@PathVariable Long id) {
-        return servicoService.recuperarServicoPorId(id);
-    }
-
-    @DeleteMapping("/{id}")
-    public void excluirServico(@PathVariable Long id) {
-        servicoService.excluirServico(id);
-    }
-}
-
+classe servico:
 
 package br.com.etechoracio.hasassist.entity;
 
@@ -69,75 +26,59 @@ public class Servico {
     private Double valor;
 
     public Servico criarServico(Servico servico) {
+        return servicoRepository.save(servico);
     }
+
 
     public void excluirServico(Long id) {
+        servicoRepository.deleteById(id);
     }
 
+
     public Servico recuperarServicoPorId(Long id) {
+        return servicoRepository.findById(id).orElse(null);
     }
 
     public List<Servico> listarServicos() {
+        return servicoRepository.findAll();
     }
 
-    public Servico atualizarServico(Long id, Servico servico) {
-    }
-}
-
-
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-
-@Getter
-@Setter
-@Entity
-@Table(name = "TBL_SERVICO")
-public class Servico {
-
-    @Id
-    @Column(name = "ID_SERVICO")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "TX_DESCRICAO")
-    private String descricao;
-
-    @Column(name = "NR_VALOR")
-    private Double valor;
-
-    // Método para criar um novo serviço
-    public Servico criarServico(Servico servico) {
-        return servicoRepository.save(servico); // Supondo que você tenha um repositório configurado
-    }
-
-    // Método para excluir um serviço por ID
-    public void excluirServico(Long id) {
-        servicoRepository.deleteById(id); // Substitua servicoRepository pelo seu repositório real
-    }
-
-    // Método para recuperar um serviço por ID
-    public Servico recuperarServicoPorId(Long id) {
-        return servicoRepository.findById(id).orElse(null); // Substitua servicoRepository pelo seu repositório real
-    }
-
-    // Método para listar todos os serviços
-    public List<Servico> listarServicos() {
-        return servicoRepository.findAll(); // Substitua servicoRepository pelo seu repositório real
-    }
-
-    // Método para atualizar os dados de um serviço
     public Servico atualizarServico(Long id, Servico servico) {
         Optional<Servico> servicoExistente = servicoRepository.findById(id);
         if (servicoExistente.isPresent()) {
             Servico servicoAtualizado = servicoExistente.get();
             servicoAtualizado.setDescricao(servico.getDescricao());
             servicoAtualizado.setValor(servico.getValor());
-            return servicoRepository.save(servicoAtualizado); // Substitua servicoRepository pelo seu repositório real
+            return servicoRepository.save(servicoAtualizado);
         } else {
-            return null; // Serviço não encontrado, você pode lançar uma exceção personalizada se desejar
+            return null;
         }
+    }
+}
+
+controller:
+
+package br.com.etechoracio.hasassist.controller;
+
+import br.com.etechoracio.hasassist.entity.Equipamento;
+import br.com.etechoracio.hasassist.repository.EquipamentoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/equipamentos")
+public class EquipamentoController {
+    @Autowired
+    private EquipamentoRepository repository;
+    @GetMapping
+    public List<Equipamento> listartodos(){
+
+        return  repository.findAll();
+    }
+    @PostMapping
+    public Equipamento inserir(@RequestBody Equipamento body){
+        return repository.save(body);
     }
 }

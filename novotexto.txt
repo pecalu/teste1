@@ -83,3 +83,61 @@ public class Servico {
     public Servico atualizarServico(Long id, Servico servico) {
     }
 }
+
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "TBL_SERVICO")
+public class Servico {
+
+    @Id
+    @Column(name = "ID_SERVICO")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "TX_DESCRICAO")
+    private String descricao;
+
+    @Column(name = "NR_VALOR")
+    private Double valor;
+
+    // Método para criar um novo serviço
+    public Servico criarServico(Servico servico) {
+        return servicoRepository.save(servico); // Supondo que você tenha um repositório configurado
+    }
+
+    // Método para excluir um serviço por ID
+    public void excluirServico(Long id) {
+        servicoRepository.deleteById(id); // Substitua servicoRepository pelo seu repositório real
+    }
+
+    // Método para recuperar um serviço por ID
+    public Servico recuperarServicoPorId(Long id) {
+        return servicoRepository.findById(id).orElse(null); // Substitua servicoRepository pelo seu repositório real
+    }
+
+    // Método para listar todos os serviços
+    public List<Servico> listarServicos() {
+        return servicoRepository.findAll(); // Substitua servicoRepository pelo seu repositório real
+    }
+
+    // Método para atualizar os dados de um serviço
+    public Servico atualizarServico(Long id, Servico servico) {
+        Optional<Servico> servicoExistente = servicoRepository.findById(id);
+        if (servicoExistente.isPresent()) {
+            Servico servicoAtualizado = servicoExistente.get();
+            servicoAtualizado.setDescricao(servico.getDescricao());
+            servicoAtualizado.setValor(servico.getValor());
+            return servicoRepository.save(servicoAtualizado); // Substitua servicoRepository pelo seu repositório real
+        } else {
+            return null; // Serviço não encontrado, você pode lançar uma exceção personalizada se desejar
+        }
+    }
+}

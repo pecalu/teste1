@@ -82,3 +82,53 @@ public class EquipamentoController {
         return repository.save(body);
     }
 }
+
+
+package br.com.etechoracio.hasassist.controller;
+
+import br.com.etechoracio.hasassist.entity.Servico;
+import br.com.etechoracio.hasassist.repository.ServicoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/servicos")
+public class ServicoController {
+    @Autowired
+    private ServicoRepository repository;
+
+    @GetMapping
+    public List<Servico> listarTodos() {
+        return repository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public Servico recuperarPorId(@PathVariable Long id) {
+        return repository.findById(id).orElse(null);
+    }
+
+    @PostMapping
+    public Servico criarServico(@RequestBody Servico servico) {
+        return repository.save(servico);
+    }
+
+    @PutMapping("/{id}")
+    public Servico atualizarServico(@PathVariable Long id, @RequestBody Servico servico) {
+        if (repository.existsById(id)) {
+            servico.setId(id); // Certifique-se de definir o ID do serviço com base no caminho
+            return repository.save(servico);
+        } else {
+            return null; // Pode retornar uma resposta de erro ou lançar uma exceção personalizada se o serviço não existir
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public void excluirServico(@PathVariable Long id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+        }
+        // Pode lançar uma exceção ou retornar uma resposta de erro se o serviço não existir
+    }
+}
